@@ -3,12 +3,28 @@ require('dotenv').config();
 const express     = require('express');
 const bodyParser  = require('body-parser');
 const cors        = require('cors');
+const helmet      = require('helmet');
 
 const apiRoutes         = require('./routes/api.js');
 const fccTestingRoutes  = require('./routes/fcctesting.js');
 const runner            = require('./test-runner');
 
 const app = express();
+
+// Necesario en hosting (Render, Railway...) para leer la IP real del usuario
+app.set('trust proxy', true);
+
+// Ocultar que usamos Express
+app.use(helmet.hidePoweredBy());
+
+// Seguridad: solo permitir scripts y CSS desde nuestro propio servidor
+app.use(helmet.contentSecurityPolicy({
+  directives: {
+    defaultSrc: ["'self'"],
+    scriptSrc: ["'self'"],
+    styleSrc: ["'self'"]
+  }
+}));
 
 app.use('/public', express.static(process.cwd() + '/public'));
 
