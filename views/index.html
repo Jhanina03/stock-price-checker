@@ -23,9 +23,9 @@
       <br />
       <code>/api/stock-prices?stock=GOOG&amp;like=true</code>
       <br />
-      <code>/api/stock-prices?stock=GOOG&amp;stock=MSFT</code>
+      <code>/api/stock-prices?stock=GOOG&amp;stock=AAPL</code>
       <br />
-      <code>/api/stock-prices?stock=GOOG&amp;stock=MSFT&amp;like=true</code>
+      <code>/api/stock-prices?stock=GOOG&amp;stock=AAPL&amp;like=true</code>
       <br />
       <h3>Example return:</h3>
       <code>{"stockData":{"stock":"GOOG","price":786.90,"likes":1}}</code>
@@ -47,7 +47,7 @@
       <h3>Compare and get relative likes</h3>
       <form id="testForm" class="border">
         <input type="text" name="stock" placeholder="GOOG" required="" />
-        <input type="text" name="stock" placeholder="MSFT" required="" />
+        <input type="text" name="stock" placeholder="AAPL" required="" />
         <input type="checkbox" name="like" value="true" /> Like both?
         <br />
         <button type="submit">Get Price!</button>

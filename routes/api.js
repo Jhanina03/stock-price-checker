@@ -11,13 +11,32 @@ function anonimizarIp(ip) {
   return crypto.createHash('sha256').update(String(ip)).digest('hex');
 }
 
-// Consulta el precio en el proxy de freeCodeCamp
+// Cache de precios por 60 segundos (evita pedir lo mismo muchas veces al proxy)
+const cachePrecios = new Map();
+const TIEMPO_CACHE_MS = 60 * 1000;
+
+// Consulta el precio en el proxy de freeCodeCamp (con reintentos si falla)
 async function obtenerPrecio(simbolo) {
+  const enCache = cachePrecios.get(simbolo);
+  if (enCache && Date.now() - enCache.hora < TIEMPO_CACHE_MS) return enCache.info;
+
   const url = `https://stock-price-checker-proxy.freecodecamp.rocks/v1/stock/${encodeURIComponent(simbolo)}/quote`;
-  const respuesta = await fetch(url);
-  const datos = await respuesta.json();
-  if (!datos || typeof datos.latestPrice !== 'number') return null;
-  return { stock: datos.symbol, price: datos.latestPrice };
+  for (let intento = 1; intento <= 3; intento++) {
+    try {
+      const respuesta = await fetch(url);
+      const datos = await respuesta.json();
+      if (datos === 'Unknown symbol' || datos === 'Invalid symbol') return null; // simbolo no existe
+      if (datos && typeof datos.latestPrice === 'number') {
+        const info = { stock: datos.symbol, price: datos.latestPrice };
+        cachePrecios.set(simbolo, { info, hora: Date.now() });
+        return info;
+      }
+    } catch (err) {
+      console.error(`Intento ${intento} fallo para ${simbolo}:`, err.message);
+    }
+    await new Promise(r => setTimeout(r, 300 * intento)); // espera y reintenta
+  }
+  return null;
 }
 
 function contarLikes(simbolo) {

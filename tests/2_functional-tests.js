@@ -52,7 +52,7 @@ suite('Functional Tests', function() {
   test('Viewing two stocks: GET request to /api/stock-prices/', function(done) {
     chai.request(server)
       .get('/api/stock-prices/')
-      .query({ stock: ['GOOG', 'MSFT'] })
+      .query({ stock: ['GOOG', 'AAPL'] })
       .end(function(err, res) {
         assert.equal(res.status, 200);
         assert.isArray(res.body.stockData);
@@ -69,7 +69,7 @@ suite('Functional Tests', function() {
   test('Viewing two stocks and liking them: GET request to /api/stock-prices/', function(done) {
     chai.request(server)
       .get('/api/stock-prices/')
-      .query({ stock: ['GOOG', 'MSFT'], like: true })
+      .query({ stock: ['GOOG', 'AAPL'], like: true })
       .end(function(err, res) {
         assert.equal(res.status, 200);
         assert.isArray(res.body.stockData);
